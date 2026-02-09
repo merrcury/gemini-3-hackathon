@@ -1,0 +1,25 @@
+# This file controls what gcloud uploads to Cloud Build.
+# Unlike .gitignore, we NEED uv.lock for reproducible builds.
+
+.git/
+.venv/
+__pycache__/
+*.py[cod]
+*.so
+
+# Secrets & tokens
+.env
+.env.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Not needed in build
+.fastmcp/
+.pytest_cache/
+.coverage
+docker-compose.yml
+.env.example

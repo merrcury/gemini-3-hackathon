@@ -1,0 +1,74 @@
+services:
+  # =============================================================================
+  # Qdrant — Vector Database for Mem0 embeddings
+  # =============================================================================
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"   # REST API
+      - "6334:6334"   # gRPC
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+  # =============================================================================
+  # Neo4j — Graph Database for Mem0 Graph Memory
+  # =============================================================================
+  neo4j:
+    image: neo4j:5.18
+    container_name: neo4j
+    restart: unless-stopped
+    ports:
+      - "7474:7474"   # Browser UI
+      - "7687:7687"   # Bolt protocol
+    environment:
+      - NEO4J_AUTH=none
+      - NEO4J_PLUGINS=["apoc"]
+    volumes:
+      - neo4j_data:/data
+
+  # =============================================================================
+  # Mem0 — Memory API Server (REST)
+  # =============================================================================
+  mem0:
+    image: mem0/mem0-api-server:latest
+    container_name: mem0
+    restart: unless-stopped
+    ports:
+      - "8888:8000"
+    env_file:
+      - .env.mem0
+    environment:
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - NEO4J_URL=bolt://neo4j:7687
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - qdrant
+      - neo4j
+      
+  
+  # =============================================================================
+  # OpenMemory UI — Mem0 Memory Dashboard (Next.js)
+  # UI: http://localhost:3000
+  # =============================================================================
+  openmemory-ui:
+    image: mem0/openmemory-ui:latest
+    container_name: openmemory-ui
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8765
+      - NEXT_PUBLIC_USER_ID=${MEM0_USER:-default}
+    depends_on:
+      - mem0
+      
+
+
+volumes:
+  qdrant_data:
+    driver: local
+  neo4j_data:
+    driver: local
