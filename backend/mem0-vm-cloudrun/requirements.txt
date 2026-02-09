@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+functions-framework
+python-jose[cryptography]
+httpx
+cachetools
+mem0ai
+qdrant-client
+neo4j
+python-multipart
+gunicorn
+langchain-neo4j
+langchain-openai
+openai
+rank_bm25

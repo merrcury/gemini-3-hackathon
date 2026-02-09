@@ -1,0 +1,11 @@
+fastapi
+functions-framework
+pymongo[srv]
+python-dotenv
+python-jose[cryptography]
+httpx
+cachetools
+python-multipart
+uvicorn
+gunicorn
+starlette
